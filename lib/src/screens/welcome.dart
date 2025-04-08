@@ -729,7 +729,7 @@ class _WelcomeState extends State<Welcome> with TickerProviderStateMixin {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) =>  Registration()),
+                          MaterialPageRoute(builder: (context) =>  const Registration()),
                         );
                       },
                       child: const Text(
@@ -946,7 +946,7 @@ class _WelcomeState extends State<Welcome> with TickerProviderStateMixin {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  Registration()),
+                  MaterialPageRoute(builder: (context) =>  const Registration()),
                 );
               },
               child: const Text(

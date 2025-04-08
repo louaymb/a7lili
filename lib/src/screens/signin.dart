@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import '../services/auth_service.dart';
 import 'welcome.dart';
 
 class SignInPage extends StatefulWidget {
@@ -12,9 +11,7 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  final AuthService _authService = AuthService();
   bool isSigningIn = false;
 
   // Handle Google Sign-In
@@ -24,25 +21,8 @@ class _SignInPageState extends State<SignInPage> {
     });
 
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        // The user canceled the sign-in
-        setState(() {
-          isSigningIn = false;
-        });
-        print('Failed sign in: User canceled the sign-in');
-        return null;
-      }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
-      final User? user = userCredential.user;
-
+      final User? user = await _authService.signInWithGoogle();
+      
       setState(() {
         isSigningIn = false;
       });
@@ -52,14 +32,13 @@ class _SignInPageState extends State<SignInPage> {
         return user;
       } else {
         print('Failed sign in: User is null');
-        return null; // If no user is returned
+        return null;
       }
     } catch (error) {
       setState(() {
         isSigningIn = false;
       });
       print('Error signing in with Google: $error');
-      print('Failed sign in: $error');
       return null;
     }
   }
@@ -104,7 +83,7 @@ class _SignInPageState extends State<SignInPage> {
                     print('Sign in successful: ${user.displayName}');
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => Welcome()),
+                      MaterialPageRoute(builder: (context) => const Welcome()),
                     );
                   } else {
                     print('Sign in failed: User is null');
@@ -117,13 +96,13 @@ class _SignInPageState extends State<SignInPage> {
                   errorBuilder: (context, error, stackTrace) => 
                       const Icon(Icons.g_mobiledata, size: 24),
                 ),
-                label: Text(
+                label: const Text(
                   'Sign in with Google',
                   style: TextStyle(color: Colors.black),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white.withOpacity(0.8),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

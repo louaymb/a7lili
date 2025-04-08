@@ -1,150 +1,131 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/user_registration_provider.dart';
+class UserRegistrationData {
+  final String? userId;
+  final String name;
+  final String email;
+  final String gender;
+  final String position;
+  final String keyArea;
+  final String? lc;
+  final String? dob;
+  final String? phone;
+  final String? emergencyPhone;
+  final String? cin;
+  final String? allergies;
+  final String? illnesses;
+  final String? singleroom;
+  final String? photoUrl;  // URL for the uploaded photo in Firebase Storage
+  final String? cvUrl;     // URL for the uploaded CV in Firebase Storage
+  final String? signatureUrl; // URL for the uploaded signature in Firebase Storage
+  final bool? registrationComplete;
 
-class RoomPage extends StatelessWidget {
-  const RoomPage({super.key});
+  UserRegistrationData({
+    this.userId,
+    required this.name,
+    required this.email,
+    required this.gender,
+    required this.position,
+    required this.keyArea,
+    this.lc,
+    this.dob,
+    this.phone,
+    this.emergencyPhone,
+    this.cin,
+    this.allergies,
+    this.illnesses,
+    this.singleroom,
+    this.photoUrl,
+    this.cvUrl,
+    this.signatureUrl,
+    this.registrationComplete,
+  });
 
-  @override
-  Widget build(BuildContext context) {
-    final userData = Provider.of<UserRegistrationProvider>(context).userData;
-
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Background image
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 60),
-                // Back button
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    icon: Image.asset('assets/back_arrow.png', width: 30),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // User info card
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: const Color(0xFFC9463E)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        userData.name,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      // LC Information
-                      _buildInfoRow('LC:', userData.lc ?? 'Not specified'),
-                      // Position
-                      _buildInfoRow('Position:', userData.position),
-                      const SizedBox(height: 20),
-                      // Contact information section
-                      const Text(
-                        'Contact Information',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _buildInfoRow('Phone:', userData.phone ?? 'Not specified'),
-                      _buildInfoRow('Emergency Phone:', 
-                          userData.emergencyPhone ?? 'Not specified'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30),
-                // Room information section
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: const Color(0xFFC9463E)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Room Information',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      // Add your room information widgets here
-                      // You can access userData.singleroom for room type
-                      Text(
-                        'Room Type: ${userData.singleroom == 'Yes' ? 'Single Room' : 'Shared Room'}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+  // Create a copy of the current instance with optional field updates
+  UserRegistrationData copyWith({
+    String? userId,
+    String? name,
+    String? email,
+    String? gender,
+    String? position,
+    String? keyArea,
+    String? lc,
+    String? dob,
+    String? phone,
+    String? emergencyPhone,
+    String? cin,
+    String? allergies,
+    String? illnesses,
+    String? singleroom,
+    String? photoUrl,
+    String? cvUrl,
+    String? signatureUrl,
+    bool? registrationComplete,
+  }) {
+    return UserRegistrationData(
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      gender: gender ?? this.gender,
+      position: position ?? this.position,
+      keyArea: keyArea ?? this.keyArea,
+      lc: lc ?? this.lc,
+      dob: dob ?? this.dob,
+      phone: phone ?? this.phone,
+      emergencyPhone: emergencyPhone ?? this.emergencyPhone,
+      cin: cin ?? this.cin,
+      allergies: allergies ?? this.allergies,
+      illnesses: illnesses ?? this.illnesses,
+      singleroom: singleroom ?? this.singleroom,
+      photoUrl: photoUrl ?? this.photoUrl,
+      cvUrl: cvUrl ?? this.cvUrl,
+      signatureUrl: signatureUrl ?? this.signatureUrl,
+      registrationComplete: registrationComplete ?? this.registrationComplete,
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white70,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
+  // Convert UserRegistrationData instance to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'name': name,
+      'email': email,
+      'gender': gender,
+      'position': position,
+      'keyArea': keyArea,
+      'lc': lc,
+      'dob': dob,
+      'phone': phone,
+      'emergencyPhone': emergencyPhone,
+      'cin': cin,
+      'allergies': allergies,
+      'illnesses': illnesses,
+      'singleroom': singleroom,
+      'photoUrl': photoUrl,
+      'cvUrl': cvUrl,
+      'signatureUrl': signatureUrl,
+      'registrationComplete': registrationComplete,
+    };
+  }
+
+  // Create a UserRegistrationData instance from a Map
+  factory UserRegistrationData.fromJson(Map<String, dynamic> json) {
+    return UserRegistrationData(
+      userId: json['userId'] as String?,
+      name: json['name'] as String,
+      email: json['email'] as String,
+      gender: json['gender'] as String,
+      position: json['position'] as String,
+      keyArea: json['keyArea'] as String,
+      lc: json['lc'] as String?,
+      dob: json['dob'] as String?,
+      phone: json['phone'] as String?,
+      emergencyPhone: json['emergencyPhone'] as String?,
+      cin: json['cin'] as String?,
+      allergies: json['allergies'] as String?,
+      illnesses: json['illnesses'] as String?,
+      singleroom: json['singleroom'] as String?,
+      photoUrl: json['photoUrl'] as String?,
+      cvUrl: json['cvUrl'] as String?,
+      registrationComplete: json['registrationComplete'] as bool?,
     );
   }
 }

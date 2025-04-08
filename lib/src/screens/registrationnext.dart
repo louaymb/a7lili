@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 class RegistrationNext extends StatefulWidget {
   final String userId;
-  const RegistrationNext({Key? key, required this.userId}) : super(key: key);
+  const RegistrationNext({super.key, required this.userId});
 
   @override
   State<RegistrationNext> createState() => _RegistrationNextState();

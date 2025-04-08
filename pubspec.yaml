@@ -16,7 +16,8 @@ dependencies:
   google_sign_in: ^6.1.5 # last known version before minSdkVersion 23 requirement
   signature: ^6.0.0  
   carousel_slider: ^5.0.0
- # file_picker: ^6.1.1 # compatible with older Android SDKs
+  
+  image_picker: ^1.0.7 # compatible with older Android SDKs
   flutter_svg: ^2.0.7
 
   # Firebase dependencies downgraded to support minSdkVersion 21

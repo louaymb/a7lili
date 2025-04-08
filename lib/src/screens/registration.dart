@@ -76,7 +76,7 @@ class _RegistrationState extends State<Registration> {
     );
 
     try {
-      await Provider.of<UserRegistrationProvider>(context, listen: false);
+      Provider.of<UserRegistrationProvider>(context, listen: false);
           final provider = Provider.of<UserRegistrationProvider>(context, listen: false);
 
 await provider.updateBasicInfo(

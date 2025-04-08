@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 import 'account.dart';
 import '../models/user_registration_data.dart';
 import '../providers/user_registration_provider.dart';
@@ -15,8 +18,12 @@ class RegistrationFinalPage extends StatefulWidget {
 }
 
 class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
+  File? _cvFile;
+  File? _photoFile;
   String? _cvFileName;
   String? _photoFileName;
+  final ImagePicker _imagePicker = ImagePicker();
+  bool _isUploading = false;
   String? _singleRoomAnswer;
   bool _agreedToTerms = false;
   bool _isSubmitting = false;
@@ -27,6 +34,70 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
     penStrokeWidth: 3,
     exportBackgroundColor: Colors.white,
   );
+
+  Future<void> _pickPhoto() async {
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _photoFile = File(pickedFile.path);
+          _photoFileName = pickedFile.name;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking photo: $e')),
+      );
+    }
+  }
+
+  Future<void> _pickCV() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx'],
+      );
+
+      if (result != null) {
+        setState(() {
+          _cvFile = File(result.files.single.path!);
+          _cvFileName = result.files.single.name;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking CV: $e')),
+      );
+    }
+  }
+
+  Future<void> _uploadFiles() async {
+    if (_photoFile == null && _cvFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one file to upload')),
+      );
+      return;
+    }
+
+    setState(() => _isUploading = true);
+
+    try {
+      final provider = Provider.of<UserRegistrationProvider>(context, listen: false);
+      await provider.uploadPhotoAndCV(_photoFile, _cvFile);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading files: $e')),
+      );
+    } finally {
+      setState(() => _isUploading = false);
+    }
+  }
 
   void _showSuccessDialog(BuildContext context) {
     showDialog(
