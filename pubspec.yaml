@@ -1,0 +1,76 @@
+name: a7lili
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_animate: ^4.2.0
+  intl: ^0.20.2
+  mobkit_dashed_border: ^0.0.7
+  google_sign_in: ^6.1.5 # last known version before minSdkVersion 23 requirement
+  signature: ^6.0.0  
+  carousel_slider: ^5.0.0
+ # file_picker: ^6.1.1 # compatible with older Android SDKs
+  flutter_svg: ^2.0.7
+
+  # Firebase dependencies downgraded to support minSdkVersion 21
+  firebase_core: ^2.25.4
+  firebase_auth: ^4.17.6 # Last version that still supports minSdk 21
+  cloud_firestore: ^4.15.6
+  firebase_storage: ^11.6.7
+  uuid: ^4.0.0 
+  provider: ^6.1.3
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1 # compatible with Flutter 3.7
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/background.png
+    - assets/meetoc.png
+    - assets/dragon.png
+    - assets/themelogo.png
+    - assets/back_arrow.png
+    - assets/lclogo.png
+    - assets/upload.png
+    - assets/clock.png
+    - assets/logo.png
+    - assets/googleicon.png
+    - assets/white.png
+    - assets/turquoise.png
+    - assets/brown.png
+    - assets/green.png
+    - assets/burgandy.png
+    - assets/F.png
+    - assets/OCP.png
+    - assets/mkt.png
+    - assets/mkt1.png
+    - assets/log.png
+    - assets/pxp.png
+    - assets/pxp1.png
+    - assets/pxp2.png
+    - assets/pxp3.png
+    - assets/er.png
+    - assets/er1.png
+    - assets/er2.png
+    - assets/er3.png
+    - assets/introback.png
+    - assets/introbackground.png
+    - assets/themelogomain1.png
+    - assets/signinback.png
+    - assets/hotelpic.png
+    - assets/themestone.png
+    - assets/importcv.png
+    - assets/importphoto.png
