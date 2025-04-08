@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
+import 'package:provider/provider.dart';
 import 'account.dart';
-
-class UserRegistrationData {
-  final String name;
-  final String userId;
-  
-  const UserRegistrationData({
-    required this.name,
-    required this.userId,
-  });
-}
+import '../models/user_registration_data.dart';
+import '../providers/user_registration_provider.dart';
 
 class RegistrationFinalPage extends StatefulWidget {
   final UserRegistrationData userData;
@@ -26,6 +19,7 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
   String? _photoFileName;
   String? _singleRoomAnswer;
   bool _agreedToTerms = false;
+  bool _isSubmitting = false;
   final TextEditingController _ocExpectationsController = TextEditingController();
   final TextEditingController _faciExpectationsController = TextEditingController();
   final SignatureController _signatureController = SignatureController(
@@ -62,7 +56,7 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
                   children: [
                     const SizedBox(height: 20),
                     Text(
-                      'Welcome ${widget.userData.name}',
+                      'Welcome ${widget.userData.name} !',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -70,13 +64,7 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      'ID: ${widget.userData.userId}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.white70,
-                      ),
-                    ),
+                    
                     const SizedBox(height: 20),
                     Image.asset(
                       'assets/clock.png',
@@ -119,6 +107,8 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
                       ),
                       child: ElevatedButton(
                         onPressed: () {
+                          final provider = Provider.of<UserRegistrationProvider>(context, listen: false);
+                          provider.clearData();
                           Navigator.of(context).pop();
                           Navigator.pushReplacement(
                             context,
@@ -253,6 +243,9 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
                           children: [
                             // CV Import Button
                             GestureDetector(
+                              onTap: () {
+                                // TODO: Implement CV import functionality
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -276,6 +269,9 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
                             const SizedBox(width: 20),
                             // Photo Import Button
                             GestureDetector(
+                              onTap: () {
+                                // TODO: Implement photo import functionality
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -389,9 +385,36 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: ElevatedButton(
-                      onPressed: _agreedToTerms 
-                          ? () {
-                              _showSuccessDialog(context);
+                      onPressed: _agreedToTerms && !_isSubmitting
+                          ? () async {
+                              setState(() => _isSubmitting = true);
+                              try {
+                                final provider = Provider.of<UserRegistrationProvider>(context, listen: false);
+                                
+                                // Save all final data
+                                await provider.updateAdditionalInfo(
+                                  singleroom: _singleRoomAnswer,
+                                  
+                                );
+                                
+                                // Mark registration as complete
+                                await provider.completeRegistration();
+                                
+                                if (!mounted) return;
+                                _showSuccessDialog(context);
+                              } catch (e) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error completing registration: ${e.toString()}'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } finally {
+                                if (mounted) {
+                                  setState(() => _isSubmitting = false);
+                                }
+                              }
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
@@ -402,14 +425,23 @@ class _RegistrationFinalPageState extends State<RegistrationFinalPage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        'Submit',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Submit',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 40),

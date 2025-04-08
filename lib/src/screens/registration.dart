@@ -51,12 +51,6 @@ class _RegistrationState extends State<Registration> {
     firestore = FirebaseFirestore.instance;
   }
 
-  bool _isValidEmail(String email) {
-    // Simple email validation regex
-    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-    return emailRegex.hasMatch(email);
-  }
-
   Future<void> _submitForm() async {
     if (selectedLC == null ||
         selectedGender == null ||
@@ -66,13 +60,6 @@ class _RegistrationState extends State<Registration> {
         emailController.text.trim().isEmpty) {
       setState(() {
         errorMessage = "All fields are required";
-      });
-      return;
-    }
-
-    if (!_isValidEmail(emailController.text.trim())) {
-      setState(() {
-        errorMessage = "Please enter a valid email address";
       });
       return;
     }
@@ -88,13 +75,22 @@ class _RegistrationState extends State<Registration> {
       keyArea: selectedKeyArea!,
     );
 
-    // Log the user data to verify before saving to Firestore
-    print("User data to be saved: ${userData.toJson()}");
-
     try {
-      // Use the provider to save the registration data
-      await Provider.of<UserRegistrationProvider>(context, listen: false)
-          .saveUserRegistration(userData);
+      await Provider.of<UserRegistrationProvider>(context, listen: false);
+          final provider = Provider.of<UserRegistrationProvider>(context, listen: false);
+
+await provider.updateBasicInfo(
+  name: nameController.text.trim(),
+  email: emailController.text.trim(),
+  gender: selectedGender,
+  position: selectedPosition,
+  keyArea: selectedKeyArea,
+);
+
+provider.userData.userId = userId!;
+await provider.updateAdditionalInfo(lc: selectedLC);
+await provider.saveUserData();
+
 
       setState(() {
         errorMessage = null;
@@ -303,6 +299,7 @@ class _RegistrationState extends State<Registration> {
         border: Border.all(color: Colors.grey),
       ),
       child: DropdownButton<String>(
+
         value: value,
         hint: Text(
           hint,

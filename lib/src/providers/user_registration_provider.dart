@@ -70,6 +70,8 @@ class UserRegistrationProvider with ChangeNotifier {
     String? cin,
     String? allergies,
     String? illnesses,
+    String? singleroom,
+
   }) async {
     _userData = _userData.copyWith(
       lc: lc,
@@ -129,4 +131,19 @@ class UserRegistrationProvider with ChangeNotifier {
       return false;
     }
   }
+
+  // Add this method to your UserRegistrationProvider class
+void clearData() {
+  _userData = UserRegistrationData(
+    userId: 'temp-id',
+    name: 'temp-name',
+    email: 'temp@email.com',
+    gender: 'Prefer not to say',
+    position: 'Member',
+    keyArea: 'Unknown',
+  );
+  notifyListeners();
+  print('User data cleared');
+}
+
 }
