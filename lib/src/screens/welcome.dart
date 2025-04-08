@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'registration.dart';
 import 'octeam.dart';
-import 'facis.dart';
 import 'conf_overview.dart';
 import 'account.dart';
 import 'room.dart';
 import 'agenda.dart';
 import 'sponsors.dart';
-import 'shop.dart';
 import 'signin.dart';
 
 void main() {
@@ -28,7 +26,6 @@ class _WelcomeState extends State<Welcome> with TickerProviderStateMixin {
   int _currentTeamPage = 0;
   final List<TeamSection> _teamSections = [
     const TeamSection(title: "MEET THE OC TEAM", targetPage: OCTeamPage()),
-    const TeamSection(title: "MEET THE FACI TEAM", targetPage: FACIPage()),
   ];
 
   // Countdown variables
@@ -616,7 +613,6 @@ class _WelcomeState extends State<Welcome> with TickerProviderStateMixin {
         _buildMenuItem("Agenda", Icons.calendar_today, () => _navigateTo(context, const Agenda())),
         _buildMenuItem("Sponsors", Icons.business, () => _navigateTo(context, const Sponsors())),
         _buildMenuItem("Contact Us", Icons.contact_mail, () {}),
-        _buildMenuItem("Shop", Icons.shopping_cart, () => _navigateTo(context, const ShopPage())),
         _buildMenuItem("About", Icons.info, () {}),
         _buildMenuItem("Sign Out", Icons.logout, () => _navigateTo(context,  const SignInPage(), replace: true)),
       ],
@@ -733,7 +729,7 @@ class _WelcomeState extends State<Welcome> with TickerProviderStateMixin {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) =>  Registration()),
+                          MaterialPageRoute(builder: (context) =>  const Registration()),
                         );
                       },
                       child: const Text(
@@ -950,7 +946,7 @@ class _WelcomeState extends State<Welcome> with TickerProviderStateMixin {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  Registration()),
+                  MaterialPageRoute(builder: (context) =>  const Registration()),
                 );
               },
               child: const Text(

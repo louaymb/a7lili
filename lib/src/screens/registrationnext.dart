@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'registrationfinalpage.dart';
+import '../providers/user_registration_provider.dart';
+import 'package:provider/provider.dart';
 
 class RegistrationNext extends StatefulWidget {
   final String userId;
@@ -19,6 +21,7 @@ class _RegistrationNextState extends State<RegistrationNext> {
   String? _illnessAnswer;
   final TextEditingController _allergiesDetailsController = TextEditingController();
   final TextEditingController _illnessDetailsController = TextEditingController();
+  bool _isLoading = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -137,13 +140,58 @@ class _RegistrationNextState extends State<RegistrationNext> {
 
                   // Next Button
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegistrationFinalPage(),
-                        ),
-                      );
+                    onPressed: _isLoading ? null : () async {
+                      // Validate required fields
+                      if (_selectedDate == null || 
+                          _phoneController.text.isEmpty || 
+                          _emergencyPhoneController.text.isEmpty || 
+                          _cinController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill all required fields'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      setState(() => _isLoading = true);
+                      
+                      try {
+                        final provider = Provider.of<UserRegistrationProvider>(context, listen: false);
+                        
+                        // Save all collected data
+                        await provider.updateAdditionalInfo(
+                          dob: DateFormat('yyyy-MM-dd').format(_selectedDate!),
+                          phone: _phoneController.text.trim(),
+                          emergencyPhone: _emergencyPhoneController.text.trim(),
+                          cin: _cinController.text.trim(),
+                          allergies: _allergiesAnswer == 'Yes' ? _allergiesDetailsController.text.trim() : 'None',
+                          illnesses: _illnessAnswer == 'Yes' ? _illnessDetailsController.text.trim() : 'None',
+                        );
+                        
+                        await provider.saveUserData();
+                        
+                        if (!mounted) return;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegistrationFinalPage(userData: provider.userData),
+                          ),
+                        );
+                      } catch (e) {
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: ${e.toString()}'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } finally {
+                        if (mounted) {
+                          setState(() => _isLoading = false);
+                        }
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFC9463E),
@@ -152,14 +200,23 @@ class _RegistrationNextState extends State<RegistrationNext> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'Next',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
 
                   const SizedBox(height: 40),
